@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import main.java.graphe.*;
+import main.java.graphe.representation.GrapheLAdj;
+import main.java.graphe.representation.GrapheLArcs;
+import main.java.graphe.representation.GrapheMAdj;
 import org.junit.jupiter.api.Test;
 
 class IGrapheTest {

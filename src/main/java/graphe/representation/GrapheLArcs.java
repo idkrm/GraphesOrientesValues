@@ -1,30 +1,28 @@
-package main.java.graphe;
+package main.java.graphe.representation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class GrapheLAdj extends Graphe{
-    private HashMap<String, List<Arc>> liste;
+import main.java.graphe.Arc;
+import main.java.graphe.Graphe;
 
-    public GrapheLAdj(){
-        this.liste = new HashMap<>();
+public class GrapheLArcs extends Graphe {
+    private List<Arc> arcs;
+
+    public GrapheLArcs() {
+        arcs = new ArrayList<>();
     }
 
     @Override
     public void ajouterSommet(String noeud) {
-        if (!this.liste.containsKey(noeud))
-            this.liste.put(noeud, new ArrayList<>());
+        if(!contientSommet(noeud))
+            arcs.add(new Arc(noeud, "", 0));
     }
 
     @Override
     public void ajouterArc(String source, String destination, Integer valeur) {
-        if (!contientArc(source, destination) && valeur > 0){
-            ajouterSommet(source);
-
-            Arc arc = new Arc(source, destination, valeur);
-            this.liste.get(source).add(arc);
-
+        if(!contientArc(source, destination) && valeur > 0){
+            arcs.add(new Arc(source, destination, valeur));
             return;
         }
         throw new IllegalArgumentException("L'arc est déjà présent");
@@ -32,22 +30,17 @@ public class GrapheLAdj extends Graphe{
 
     @Override
     public void oterSommet(String noeud) {
-        if (contientSommet(noeud)) {
-            this.liste.remove(noeud);
-
-            for (String s : this.liste.keySet())
-                for (Arc a : this.liste.get(s))
-                    if (a.getDestination().equals(noeud))
-                        this.liste.get(s).remove(a);
-        }
+        for (Arc a : arcs)
+            if (contientSommet(noeud))
+                arcs.remove(a);
     }
 
     @Override
     public void oterArc(String source, String destination) {
         if (contientArc(source, destination))
-            for (Arc a : this.liste.get(source)){
+            for (Arc a : arcs) {
                 if (a.getSource().equals(source) && a.getDestination().equals(destination)) {
-                    this.liste.get(source).remove(a);
+                    arcs.remove(a);
                     return;
                 }
             }
@@ -56,11 +49,11 @@ public class GrapheLAdj extends Graphe{
 
     @Override
     public List<String> getSommets() {
-        List<String> sommets = new ArrayList<>();
+        List <String> sommets = new ArrayList<>();
 
-        for (String s : this.liste.keySet())
-            if (!sommets.contains(s))
-                sommets.add(s);
+        for (Arc a : arcs)
+            if (!sommets.contains(a.getSource()))
+                sommets.add(a.getSource());
 
         return sommets;
     }
@@ -69,8 +62,8 @@ public class GrapheLAdj extends Graphe{
     public List<String> getSucc(String sommet) {
         List<String> succ = new ArrayList<>();
 
-        if (this.liste.containsKey(sommet))
-            for (Arc a : this.liste.get(sommet))
+        for (Arc a : arcs)
+            if (!succ.contains(a.getDestination()))
                 succ.add(a.getDestination());
 
         return succ;
@@ -78,17 +71,16 @@ public class GrapheLAdj extends Graphe{
 
     @Override
     public int getValuation(String src, String dest) {
-        if (this.liste.containsKey(src)) {
-            for (Arc a : this.liste.get(src))
-                if (a.getDestination().equals(dest))
-                    return a.getValuation();
-        }
+        for (Arc a : arcs)
+            if (src.equals(a.getSource()) && dest.equals(a.getDestination()))
+                return a.getValuation();
+
         return -1;
     }
 
     @Override
     public boolean contientSommet(String sommet) {
-        for (Arc a : this.liste.get(sommet))
+        for (Arc a : arcs)
             if (a.getSource().equals(sommet))
                 return true;
 
@@ -97,7 +89,7 @@ public class GrapheLAdj extends Graphe{
 
     @Override
     public boolean contientArc(String src, String dest) {
-        for (Arc a : this.liste.get(src))
+        for (Arc a : arcs)
             if (a.getSource().equals(src) && a.getDestination().equals(dest))
                 return true;
 

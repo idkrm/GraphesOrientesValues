@@ -1,4 +1,6 @@
-package main.java.graphe;
+package main.java.graphe.representation;
+
+import main.java.graphe.Graphe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
